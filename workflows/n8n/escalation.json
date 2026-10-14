@@ -1,0 +1,86 @@
+
+{
+  "name": "AI Support Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "support-escalation",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Escalation Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/escalation",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "customer_id",
+              "value": "={{ ($json.body || {}).customer_id ?? '' }}"
+            },
+            {
+              "name": "reason",
+              "value": "={{ ($json.body || {}).reason ?? '' }}"
+            },
+            {
+              "name": "priority",
+              "value": "={{ ($json.body || {}).priority ?? 'medium' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Escalation API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [250, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Return Escalation Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [500, 0]
+    }
+  ],
+  "connections": {
+    "Escalation Request": {
+      "main": [
+        [
+          {
+            "node": "Escalation API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalation API": {
+      "main": [
+        [
+          {
+            "node": "Return Escalation Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {}
+}

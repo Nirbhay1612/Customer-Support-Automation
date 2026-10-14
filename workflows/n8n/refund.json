@@ -1,0 +1,90 @@
+
+{
+  "name": "AI Refund Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "refund-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Refund Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/refund",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "order_id",
+              "value": "={{ ($json.body || {}).order_id ?? '' }}"
+            },
+            {
+              "name": "customer_id",
+              "value": "={{ ($json.body || {}).customer_id ?? '' }}"
+            },
+            {
+              "name": "customer_email",
+              "value": "={{ ($json.body || {}).customer_email ?? '' }}"
+            },
+            {
+              "name": "reason",
+              "value": "={{ ($json.body || {}).reason ?? '' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "Refund API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [250, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Return Refund Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [500, 0]
+    }
+  ],
+  "connections": {
+    "Refund Request": {
+      "main": [
+        [
+          {
+            "node": "Refund API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refund API": {
+      "main": [
+        [
+          {
+            "node": "Return Refund Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {}
+}

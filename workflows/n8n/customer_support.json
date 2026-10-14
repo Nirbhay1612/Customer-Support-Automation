@@ -1,0 +1,95 @@
+
+{
+  "name": "AI Customer Support",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "customer-support",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Customer Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/customer-support",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ ($json.body || {}).message || '' }}"
+            },
+            {
+              "name": "customer_id",
+              "value": "={{ ($json.body || {}).customer_id || '' }}"
+            },
+            {
+              "name": "order_id",
+              "value": "={{ ($json.body || {}).order_id || '' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "name": "AI Automation API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        250,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Return Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        500,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Customer Request": {
+      "main": [
+        [
+          {
+            "node": "AI Automation API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Automation API": {
+      "main": [
+        [
+          {
+            "node": "Return Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {}
+}

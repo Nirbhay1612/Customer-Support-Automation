@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What payment methods are supported?",
+    "answer": "Available payment methods depend on the payment options enabled by the business.",
+    "category": "payments"
+  },
+  {
+    "question": "My payment failed. What should I do?",
+    "answer": "Check your payment details and try again. If the payment continues to fail, contact customer support or your payment provider.",
+    "category": "payments"
+  },
+  {
+    "question": "I was charged but my order was not created. What should I do?",
+    "answer": "Keep your payment transaction details and contact customer support so the payment and order status can be checked.",
+    "category": "payments"
+  }
+]

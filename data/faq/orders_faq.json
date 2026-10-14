@@ -1,0 +1,17 @@
+[
+  {
+    "question": "How can I track my order?",
+    "answer": "You can track your order using the tracking information associated with your order.",
+    "category": "orders"
+  },
+  {
+    "question": "Where can I find my order ID?",
+    "answer": "Your order ID can usually be found in your order confirmation email or in your account's order history.",
+    "category": "orders"
+  },
+  {
+    "question": "My order has not arrived. What should I do?",
+    "answer": "Check the latest tracking information first. If the estimated delivery date has passed, contact customer support for assistance.",
+    "category": "orders"
+  }
+]

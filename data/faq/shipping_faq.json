@@ -1,0 +1,17 @@
+[
+  {
+    "question": "How long does shipping take?",
+    "answer": "Shipping time depends on the delivery location, shipping method, and order processing time.",
+    "category": "shipping"
+  },
+  {
+    "question": "Can I change my delivery address?",
+    "answer": "Address changes may be possible before the order is shipped. Contact customer support as soon as possible.",
+    "category": "shipping"
+  },
+  {
+    "question": "How can I check my shipping status?",
+    "answer": "You can check the latest shipping status using the tracking information associated with your order.",
+    "category": "shipping"
+  }
+]

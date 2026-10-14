@@ -1,0 +1,17 @@
+[
+  {
+    "question": "How can I request a refund?",
+    "answer": "To request a refund, provide your order ID and the reason for the refund. The request will be checked against the applicable refund policy.",
+    "category": "refunds"
+  },
+  {
+    "question": "How long does a refund take?",
+    "answer": "Refund processing time depends on the refund method and payment provider. The customer will receive an update once the refund is processed.",
+    "category": "refunds"
+  },
+  {
+    "question": "Can I get a refund for a cancelled order?",
+    "answer": "Refund eligibility for a cancelled order depends on the order status and applicable refund policy.",
+    "category": "refunds"
+  }
+]

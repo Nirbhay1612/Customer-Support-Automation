@@ -1,0 +1,17 @@
+[
+  {
+    "question": "How can I contact customer support?",
+    "answer": "You can contact customer support through the support email or the customer support chat.",
+    "category": "general"
+  },
+  {
+    "question": "What are your customer support hours?",
+    "answer": "Customer support is available during the business support hours listed on the company's official support page.",
+    "category": "general"
+  },
+  {
+    "question": "How can I update my account information?",
+    "answer": "You can update available account information from your account settings. For information that cannot be changed directly, contact customer support.",
+    "category": "account"
+  }
+]
