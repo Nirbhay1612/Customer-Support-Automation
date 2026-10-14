@@ -6,7 +6,7 @@ The system can classify customer requests, retrieve information from a knowledge
 
 ## 🚀 Streamlit App Demo
 
-**[🌐 Open Live Streamlit Demo](YOUR_STREAMLIT_DEMO_URL)**
+**[🌐 Open Live Streamlit Demo](https://customer-support-automation-lcqsg7gkdpadqqpkewufk5.streamlit.app/)**
 
 
 
