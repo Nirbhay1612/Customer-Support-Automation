@@ -1,371 +1,222 @@
-# 🤖 AI Automation System
+# 🤖 AI Customer Support Automation System
 
-An AI-powered customer-support and business-automation portfolio project built with **Python, FastAPI, Groq LLM, Retrieval-Augmented Generation (RAG), FAISS, SQLAlchemy, Streamlit, and n8n**.
+An AI-powered customer support automation system built with Python. This project is designed to classify customer messages, generate helpful responses, and automate common customer support workflows.
 
-The system is designed to classify customer requests, retrieve relevant knowledge-base information, support order/refund workflows, handle escalations, send notifications, and expose APIs for external integrations.
+The system combines AI-powered intent classification, response generation, API integration, and a Streamlit dashboard to provide a foundation for intelligent customer support automation.
 
-## 🚀 Demo
+---
+## ✨ Demo Link
 
-**[🌐 Open Live Streamlit Demo](YOUR_STREAMLIT_DEMO_URL)**
+👉 **[Launch AI Customer Support Automation](https://customer-support-automation-zahyu5sg6hxnomxprrjfwh.streamlit.app/)**
+## ✨ Features
 
+- 🤖 **AI Intent Classification** — Identifies customer intents such as order status, return requests, refund requests, and order-related issues.
+- 💬 **AI Response Generation** — Generates helpful customer support responses using a configured language model.
+- 🛍️ **Customer Support Workflows** — Supports common customer service scenarios.
+- 🧠 **Retrieval-Augmented Generation (RAG)** — Supports knowledge retrieval where configured.
+- 🔌 **API Integration** — Supports backend API functionality where implemented.
+- 📊 **Interactive Dashboard** — Provides a Streamlit interface for interacting with the application.
+- 🛡️ **Error Handling** — Includes handling for errors and unexpected inputs.
+- 🧪 **Automated Testing** — Uses pytest to test application components.
+- ⚙️ **Environment Configuration** — Keeps API credentials and configuration in environment variables.
 
+---
 
+## 🧰 Tech Stack
 
-## 🚀 Features
+| Technology | Purpose |
+|---|---|
+| Python | Core application logic |
+| Streamlit | Interactive dashboard |
+| FastAPI | Backend API, if configured |
+| LangChain | LLM/RAG integration, where used |
+| Groq / OpenAI | Language-model integration, depending on configuration |
+| Vector Database | Knowledge retrieval, where configured |
+| Pytest | Automated testing |
+| Git & GitHub | Version control and project hosting |
 
-- AI-powered customer-intent classification
-- Customer-support automation
-- Order-status workflow
-- Refund-request workflow
-- Human-escalation workflow
-- RAG-based knowledge retrieval
-- FAQ knowledge base
-- PDF, Markdown, and text document support
-- FAISS vector similarity search
-- Sentence Transformer embeddings
-- Email notifications and webhook integrations
-- SQLAlchemy database layer
-- FastAPI REST API
-- Streamlit monitoring dashboard
-- n8n workflow integration
-- Input validation and AI guardrails
-- Structured logging
-- Automated tests with `pytest`
+---
 
-## 🏗️ Architecture
+## 📸 Screenshots
 
-```text
-Customer
-   |
-   v
-n8n / External Client
-   |
-   v
-FastAPI
-   |
-   v
-AI Intent Classifier
-   |
-   +------------------+-------------------+
-   |                  |                   |
-   v                  v                   v
-RAG System        Workflow Router      Escalation
-   |                  |                   |
-   v                  v                   v
-FAISS Vector      Business Workflows   Human Review
-Store                 |
-                      +--------+--------+
-                      |        |        |
-                      v        v        v
-                   Database   Email   Webhooks
-```
+### Dashboard
+
+![AI Customer Support Dashboard](screenshots/dashboard.png)
+
+### Error Handling
+
+![Error Handling](screenshots/error-handling.png)
+
+---
 
 ## 📁 Project Structure
 
 ```text
-ai-automation-system/
-├── main.py
-├── config.py
-├── api/
-│   ├── routes.py
-│   └── webhooks.py
+AI Customer Support Automation/
+│
 ├── ai/
 │   ├── classifier.py
 │   ├── generator.py
-│   ├── prompts.py
-│   └── guardrails.py
-├── automation/
-│   ├── router.py
-│   ├── order_workflow.py
-│   ├── refund_workflow.py
-│   ├── escalation.py
-│   └── notification.py
-├── rag/
-│   ├── loader.py
-│   ├── embeddings.py
-│   ├── retriever.py
-│   └── vectorstore.py
-├── integrations/
-│   ├── order_api.py
-│   ├── email.py
-│   └── webhook.py
-├── database/
-│   ├── database.py
-│   ├── models.py
-│   └── repository.py
-├── utils/
-│   ├── logger.py
-│   ├── validators.py
-│   └── exceptions.py
-├── data/
-│   ├── faq/
-│   └── documents/
-├── workflows/
-│   └── n8n/
-├── tests/
-├── dashboard/
-│   └── streamlit_app.py
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── .env.example
-├── .gitignore
+│   └── prompts.py
+│
+├── screenshots/
+│   ├── dashboard.png
+│   └── error-handling.png
+│
+├── .streamlit/
+│   └── config.toml
+│
+├── app.py
+├── config.py
 ├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
+├── .env
+├── .gitignore
 └── README.md
 ```
 
-## 🛠️ Tech Stack
+Additional directories and modules may be present in the repository.
 
-| Technology | Purpose |
-|---|---|
-| Python | Core development |
-| FastAPI | REST API |
-| Groq | LLM inference |
-| Sentence Transformers | Text embeddings |
-| FAISS | Vector similarity search |
-| RAG | Knowledge-grounded responses |
-| SQLAlchemy | Database ORM |
-| SQLite | Development database |
-| Streamlit | Monitoring dashboard |
-| n8n | Workflow automation |
-| pytest | Testing |
-| Docker | Containerization |
-| GitHub Actions | Continuous integration |
+---
 
-## ⚙️ Setup and Installation
+## ⚙️ Installation and Setup
 
-### 1. Prerequisites
+### 1. Clone the Repository
 
-- Python 3.11 or 3.12 (use a version supported by your dependencies)
-- Git
-- A Groq API key if you use the Groq-powered LLM
-- Docker Desktop only if you plan to use Docker
 
-### 2. Clone the repository
+git clone https://github.com/Nirbhay1612/Customer-Support-Automation.git
 
-Replace the example URL with your actual GitHub repository URL.
 
-```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd ai-automation-system
-```
+Navigate to the project directory:
 
-If the project is already on your computer, open PowerShell in the project folder and continue.
 
-### 3. Create and activate a virtual environment
+cd customer-Support-Automation
 
-**Windows PowerShell:**
 
-```powershell
-py -3.12 -m venv venv
+### 2. Create a Virtual Environment
+
+
+python -m venv venv
+
+
+### 3. Activate the Virtual Environment
+
+For Windows PowerShell:
+
+
 .\venv\Scripts\Activate.ps1
-```
 
-If PowerShell blocks script execution, run this in the current terminal session:
 
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\venv\Scripts\Activate.ps1
-```
+### 4. Install Dependencies
 
-**macOS / Linux:**
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 4. Install dependencies
-
-```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
 
-### 5. Configure environment variables
 
-Create `.env` from `.env.example`.
+---
 
-**Windows PowerShell:**
+## 🔑 Environment Configuration
 
-```powershell
-Copy-Item .env.example .env
-```
+Create a `.env` file in the root directory of the project.
 
-**macOS / Linux:**
+Add the environment variables required by your application's `config.py`.
 
-```bash
-cp .env.example .env
-```
+For example, if your configuration uses Groq:
 
-Open `.env` and use the exact variable names expected by `config.py`. For example, if your project uses these names:
 
-```env
-GROQ_API_KEY=your_groq_api_key_here
 LLM_PROVIDER=groq
-LLM_MODEL=your_supported_groq_model
-```
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=openai/gpt-oss-120b
+LLM_TEMPERATURE=0.2
+LLM_TIMEOUT=30
+LLM_MAX_RETRIES=2
 
-Use a valid model supported by your provider and the configuration in your project. Never add real API keys to the README or commit `.env` to GitHub.
 
-### 6. Add knowledge-base documents
+**Important:** These are example settings. Use the exact environment-variable names expected by your project's configuration and the model currently supported by your provider.
 
-Put FAQ and document files in the configured folders, for example:
+Never publish real API keys, passwords, tokens, or other secrets on GitHub. Keep your `.env` file private and ensure it is listed in `.gitignore`.
 
-```text
-data/faq/
-data/documents/
-```
+---
 
-Check `rag/loader.py` and `rag/vectorstore.py` for supported formats and the actual ingestion procedure. If a separate command is needed to build the FAISS index, run it before testing RAG queries.
+## ▶️ Run the Application
 
-### 7. Run the application
+### Start the Streamlit Dashboard
 
-Use the command matching the entry point implemented in your project.
+From the project root, run:
 
-**FastAPI** (if `main.py` exposes an ASGI object named `app`):
 
-```powershell
-uvicorn main:app --reload
-```
+streamlit run app.py
 
-**Streamlit dashboard:**
 
-```powershell
-streamlit run dashboard/streamlit_app.py
-```
+Streamlit will display a local URL in the terminal. Open that URL in your browser to access the dashboard.
 
-Streamlit prints its local URL in the terminal. FastAPI commonly runs at `http://127.0.0.1:8000`; interactive docs are commonly available at `http://127.0.0.1:8000/docs` when enabled.
+### Start the FastAPI Backend
 
-> If your actual dashboard path or FastAPI entry point differs, update the command to match your code.
+If your project contains `app/main.py` and defines a FastAPI instance named `app`, run this command in a separate terminal:
 
-## 🧠 RAG Pipeline
 
-```text
-Documents
-   ↓
-Document Loader
-   ↓
-Text Processing
-   ↓
-Embeddings
-   ↓
-FAISS Vector Store
-   ↓
-Similarity Search
-   ↓
-Relevant Context
-   ↓
-LLM
-   ↓
-Grounded Response
-```
+uvicorn app.main:app --reload
 
-Knowledge sources may be stored in `data/faq/` and `data/documents/`.
 
-## 🔄 Automation Workflows
+If your FastAPI entry point is located elsewhere, adjust the command to match the actual file and application variable.
 
-### Order workflow
+---
 
-```text
-Customer Request → Intent Classification → Order ID Validation
-→ Order Lookup → Order Information → Customer Response
-→ Optional Email Notification
-```
+## 🧪 Run Tests
 
-### Refund workflow
+Run the complete test suite:
 
-```text
-Refund Request → Order Validation → Eligibility Check
-→ Refund Request Creation → Notification → Customer Update
-```
 
-### Escalation workflow
+pytest -v
 
-```text
-Customer Issue → AI / Rule Detection → Priority Assignment
-→ Support Notification → Human Review
-```
 
-## 🔗 n8n Integration
+To run a particular test file:
 
-Workflow exports can be stored in `workflows/n8n/`. Import the relevant JSON files into n8n and configure API URLs, credentials, and webhook settings for your environment. Never commit webhook secrets or credentials.
 
-## 🗄️ Database
+pytest tests/test_ai.py -v
 
-The project uses SQLAlchemy for database operations and lists SQLite as the development database. Models may include customers, orders, refund requests, escalations, and automation logs, depending on the implemented schema.
 
-## 🧪 Testing
+Use the test files and paths that actually exist in your repository.
 
-Activate the virtual environment and run:
+---
 
-**All tests:**
+## 🛡️ Security and Best Practices
 
-```powershell
-python -m pytest tests/ -v
-```
+- Store API keys in environment variables.
+- Never commit your `.env` file or other sensitive information.
+- Keep dependencies updated.
+- Validate user input before processing it.
+- Handle API errors and unexpected responses safely.
+- Use mock responses for tests that should not make real API calls.
+- Review authentication and permissions before exposing APIs publicly.
 
-**AI tests:**
+---
 
-```powershell
-python -m pytest tests/test_ai.py -v
-```
+## 🚀 Future Improvements
 
-**RAG tests:**
+- Add support for additional customer intents.
+- Improve AI response accuracy.
+- Expand automated test coverage.
+- Add more customer support integrations.
+- Improve logging and monitoring.
+- Add authentication and rate limiting where required.
+- Deploy the application to a suitable hosting platform.
 
-```powershell
-python -m pytest tests/test_rag.py -v
-```
+---
 
-**API tests:**
+## 👨‍💻 Author
 
-```powershell
-python -m pytest tests/test_api.py -v
-```
+**Nirbhay Tembhurne**
 
-**Workflow tests:**
+- GitHub: [@Nirbhay1612](https://github.com/Nirbhay1612)
+- Repository: [AI Customer Support Automation](https://github.com/Nirbhay1612/Customer-Support-Automation)
 
-```powershell
-python -m pytest tests/test_workflows.py -v
-```
-
-Some tests may require environment variables or external services. Check the relevant modules if a test needs additional setup.
-
-## 🐳 Docker
-
-If the Docker configuration matches your application entry points:
-
-```bash
-docker build -t ai-automation-system .
-docker compose up --build
-```
-
-Review `Dockerfile` and `docker-compose.yml` for expected ports, commands, environment variables, and services.
-
-## 🛡️ Guardrails and Security
-
-The project describes checks such as input validation, message-length validation, prompt-injection detection, intent validation, confidence thresholds, response validation, required-data validation, error handling, and human escalation.
-
-The AI should not invent order information, refund decisions, delivery dates, company policies, or payment information.
-
-**Security checklist:**
-- Keep `.env` out of version control.
-- Never commit API keys, database credentials, SMTP passwords, webhook secrets, or sensitive customer data.
-- Use `.env.example` for placeholder variable names only.
-- Configure authentication, authorization, rate limiting, and secret management before production use.
-
-## 📈 Future Improvements
-
-Potential next steps include production authentication and authorization, rate limiting, Redis caching, PostgreSQL support, improved observability, RAG evaluation, document-chunking improvements, automated vector-store ingestion, real order-management API integration, production-grade refund API integration, role-based access control, expanded CI/CD, and cloud deployment.
-
-## 👨‍💻 Project Purpose
-
-This portfolio project demonstrates practical work with Python backend development, LLM integration, RAG, vector search, API development, workflow automation, external integrations, database design, testing, monitoring, AI guardrails, and containerization.
+---
 
 ## 📄 License
 
-This project states that it is licensed under the MIT License. See the `LICENSE` file for details.
+A license has not been specified in this README. Add a `LICENSE` file if you intend to distribute the project under a particular open-source license.
 
-See the `LICENSE` file for details.
+---
+
+⭐ If you find this project useful, consider giving the repository a star!
