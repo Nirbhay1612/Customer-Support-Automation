@@ -1,9 +1,13 @@
-
 """
 Intent classification for AI Customer Support Automation.
 
-Classifies customer messages into supported intents, validates LLM
-responses, and safely falls back to UNKNOWN when classification fails.
+Features:
+- Classifies customer messages into supported intents.
+- Normalizes model-generated intent labels.
+- Parses JSON and Markdown-wrapped JSON responses.
+- Validates confidence scores.
+- Provides safe fallbacks for invalid responses.
+- Logs unexpected exceptions for debugging.
 """
 
 from __future__ import annotations
@@ -73,23 +77,9 @@ def _unknown_result(reason: str) -> dict[str, Any]:
 # ============================================================
 
 def _build_classifier_prompt(message: str) -> str:
-    """
-    Build the classifier prompt safely.
+    """Insert the customer message without formatting JSON braces."""
 
-    If the template contains unescaped JSON braces, fall back to
-    replacing only the explicit message placeholder.
-    """
-
-    try:
-        return CLASSIFIER_PROMPT.format(message=message)
-
-    except (KeyError, ValueError, IndexError):
-        logger.warning(
-            "Classifier prompt formatting failed; using safe fallback."
-        )
-
-        # Do not run format() again: literal JSON braces must remain intact.
-        return CLASSIFIER_PROMPT.replace("{message}", message)
+    return CLASSIFIER_PROMPT.replace("{message}", message)
 
 
 # ============================================================
@@ -98,10 +88,14 @@ def _build_classifier_prompt(message: str) -> str:
 
 def _normalize_intent(value: Any) -> str:
     """
-    Normalize a model-generated intent into a supported label.
+    Normalize model-generated intent labels.
 
-    Handles case differences, surrounding formatting, aliases,
-    and enum-style names such as SupportIntent.RETURN.
+    Examples:
+        RETURN                  -> return_request
+        SupportIntent.RETURN    -> return_request
+        refund                  -> refund_request
+        order-status            -> order_status
+        FAQ                     -> faq
     """
 
     if not isinstance(value, str):
@@ -115,14 +109,20 @@ def _normalize_intent(value: Any) -> str:
     # Remove surrounding Markdown formatting and quotes.
     intent = intent.strip("`'\"* \t\r\n")
 
-    # Handle enum-style labels.
+    # Handle enum-style values, such as SupportIntent.RETURN.
     if "." in intent:
         intent = intent.rsplit(".", 1)[-1]
 
-    # Handle enum-like text such as "intent: return".
+    # Handle labels such as "intent: return".
     if ":" in intent:
-        intent = intent.split(":", 1)[0]
+        parts = intent.split(":", 1)
 
+        # Only use the portion after the colon when the prefix
+        # indicates that this is an intent label.
+        if parts[0].strip().lower() in {"intent", "label"}:
+            intent = parts[1]
+
+    # Normalize case and surrounding formatting.
     intent = intent.strip("`'\"* \t\r\n").lower()
 
     # Normalize spaces and hyphens.
@@ -130,12 +130,14 @@ def _normalize_intent(value: Any) -> str:
 
     compact_intent = intent.replace("_", "")
 
+    # Resolve aliases.
     if compact_intent in INTENT_ALIASES:
         return INTENT_ALIASES[compact_intent]
 
     if intent in INTENT_ALIASES:
         return INTENT_ALIASES[intent]
 
+    # Accept supported canonical labels.
     if intent in SUPPORTED_INTENTS:
         return intent
 
@@ -143,14 +145,17 @@ def _normalize_intent(value: Any) -> str:
 
 
 # ============================================================
-# Response Parsing
+# JSON Extraction
 # ============================================================
 
 def _extract_json(response: str) -> dict[str, Any] | None:
     """
     Extract a JSON object from a model response.
 
-    Supports plain JSON and JSON wrapped in Markdown code fences.
+    Supports:
+    - Plain JSON.
+    - JSON wrapped in Markdown code fences.
+    - Short explanatory text before a JSON object.
     """
 
     if not isinstance(response, str) or not response.strip():
@@ -166,20 +171,28 @@ def _extract_json(response: str) -> dict[str, Any] | None:
         flags=re.IGNORECASE,
     ).strip()
 
+    # First try parsing the entire response.
     try:
         result = json.loads(text)
 
     except json.JSONDecodeError:
+        # If extra text surrounds the JSON, locate the object.
         decoder = json.JSONDecoder()
+        result = None
 
-        # Allow short text before a JSON object.
         for match in re.finditer(r"\{", text):
             try:
-                result, _ = decoder.raw_decode(text[match.start():])
+                candidate, _ = decoder.raw_decode(
+                    text[match.start():]
+                )
+
+                result = candidate
                 break
+
             except json.JSONDecodeError:
                 continue
-        else:
+
+        if result is None:
             return None
 
     if not isinstance(result, dict):
@@ -188,41 +201,59 @@ def _extract_json(response: str) -> dict[str, Any] | None:
     return result
 
 
+# ============================================================
+# Response Parsing and Validation
+# ============================================================
+
 def _parse_response(response: str) -> dict[str, Any]:
     """
-    Parse and validate the classifier response.
-
-    Invalid structures or unsupported intents fall back to UNKNOWN.
+    Parse and validate the model-generated classification.
     """
 
     result = _extract_json(response)
 
     if result is None:
-        logger.warning("Classifier returned an invalid JSON object.")
-        return _unknown_result("Invalid classifier response.")
+        logger.warning(
+            "Classifier returned an invalid JSON response."
+        )
 
-    intent = _normalize_intent(result.get("intent"))
+        return _unknown_result(
+            "Invalid classifier response."
+        )
 
+    # Normalize the intent.
+    intent = _normalize_intent(
+        result.get("intent")
+    )
+
+    # Validate confidence.
     raw_confidence = result.get("confidence", 0.0)
 
-    # Booleans are numeric subclasses in Python; reject them explicitly.
     if isinstance(raw_confidence, bool):
         confidence = 0.0
+
     else:
         try:
             confidence = float(raw_confidence)
+
         except (TypeError, ValueError, OverflowError):
             confidence = 0.0
 
+    # Prevent NaN and infinity.
     if not math.isfinite(confidence):
         confidence = 0.0
-    else:
-        confidence = max(0.0, min(confidence, 1.0))
 
-    # An unsupported intent must not carry a high confidence score.
+    else:
+        confidence = max(
+            0.0,
+            min(confidence, 1.0),
+        )
+
+    # Unknown intents should never have high confidence.
     if intent == "unknown":
         confidence = 0.0
 
+    # Validate the reason.
     reason = result.get("reason", "")
 
     if not isinstance(reason, str):
@@ -245,26 +276,69 @@ def classify_intent(message: str) -> dict[str, Any]:
     """
     Classify a customer message into a supported intent.
 
+    Args:
+        message: Customer's input message.
+
     Returns:
-        A dictionary containing intent, confidence, and reason.
+        Dictionary containing:
+        - intent
+        - confidence
+        - reason
     """
 
-    if not isinstance(message, str) or not message.strip():
-        return _unknown_result("Empty or invalid message.")
+    # Validate input.
+    if not isinstance(message, str):
+        return _unknown_result(
+            "Invalid message type."
+        )
+
+    message = message.strip()
+
+    if not message:
+        return _unknown_result(
+            "Empty message."
+        )
 
     try:
-        prompt = _build_classifier_prompt(message.strip())
+        # Build the classifier prompt.
+        prompt = _build_classifier_prompt(message)
+
+        if not isinstance(prompt, str) or not prompt.strip():
+            logger.error(
+                "Classifier prompt is empty or invalid."
+            )
+
+            return _unknown_result(
+                "Classifier prompt is invalid."
+            )
+
+        # Generate the model response.
         response = generate_text(prompt)
 
+        # Validate the response type.
+        if not isinstance(response, str):
+            logger.error(
+                "Generator returned an unexpected response type: %s",
+                type(response).__name__,
+            )
+
+            return _unknown_result(
+                "Invalid generator response type."
+            )
+
+        # Parse and validate the response.
         return _parse_response(response)
 
     except Exception:
-        # Do not log customer messages or exception details.
-        logger.error(
-            "Intent classification failed.",
-            exc_info=False,
+        # Keep the customer message and secrets out of the logs.
+        # logger.exception records the traceback for debugging.
+        logger.exception(
+            "Unexpected error during intent classification."
         )
-        return _unknown_result("Classification failed.")
+
+        return _unknown_result(
+            "Classification failed."
+        )
 
 
 # ============================================================
