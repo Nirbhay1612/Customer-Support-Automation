@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 import math
 import requests
+from ui_theme import apply_dark_theme
 import streamlit as st
 
 
@@ -35,6 +36,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+apply_dark_theme()
 
 
 # ------------------------------------------------------------
